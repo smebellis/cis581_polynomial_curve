@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import KFold
 from sklearn.metrics import root_mean_squared_error
 import numpy as np
+import argparse
+import matplotlib
+
+matplotlib.use("TkAgg")
 
 
 class PolynomialCurveFitting:
@@ -153,10 +157,41 @@ class PolynomialCurveFitting:
         plt.title("Polynomial Regression Fit")
         plt.legend()
         plt.show()
+        plt.close()
+
+
+def argument_parser():
+    parser = argparse.ArgumentParser(
+        prog="CIS581 Project 1",
+        description="A polynomial curve fitting regression algorithm",
+    )
+
+    parser.add_argument(
+        "--train",
+        type=str,
+        help="Path to the training dataset for loading",
+        default="./train.dat",
+        required=True,
+    )
+    parser.add_argument(
+        "--test",
+        type=str,
+        help="Path to the test dataset for loading",
+        default="./test.dat",
+        required=True,
+    )
+
+    parser.add_argument(
+        "--plot",
+        type=bool,
+    )
+
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    print("Starting program")
+
+    parser = argument_parser()
     # Generate degrees
     degrees = [x for x in range(1, 28)]
     # Generate Lambda values
@@ -169,8 +204,8 @@ if __name__ == "__main__":
     # Cross Fold Validation 12 folds
     kf = KFold(n_splits=12, random_state=42, shuffle=True)
 
-    df_train = pd.read_csv("./train.dat", delimiter=" ", header=None)
-    df_test = pd.read_csv("./test.dat", delimiter=" ", header=None)
+    df_train = pd.read_csv(parser.train, delimiter=" ", header=None)
+    df_test = pd.read_csv(parser.test, delimiter=" ", header=None)
 
     X_train = df_train.iloc[:, 0].to_numpy().reshape(-1, 1)
     X_test = df_test.iloc[:, 0].to_numpy().reshape(-1, 1)
@@ -188,6 +223,9 @@ if __name__ == "__main__":
     cv_results = mlPoly.cross_validate(X_train, y_train, degrees, kf)
 
     best_degree = min(cv_results, key=cv_results.get)
+
+    if parser.plot == True:
+        mlPoly.plot_points(X_train, y_train, best_degree)
 
     best_rmse, best_lambda = mlPoly.cross_validate_ridge(
         X_train, y_train, 28, kf, lambda_values, best_rmse, best_lambda
@@ -209,8 +247,9 @@ if __name__ == "__main__":
     # Predict on test set
     y_test_pred = mlPoly.predict(X_test_scaled, final_w)
 
+    if parser.plot == True:
+        mlPoly.plot_points(X_test, y_test, best_degree)
+
     # Compute final test RMSE
     final_test_rmse = root_mean_squared_error(y_test, y_test_pred)
     print(f"Final Test RMSE: {final_test_rmse:.2f}")
-
-    breakpoint()
