@@ -1,7 +1,10 @@
 *.dat
 *.pdf
+<<<<<<< HEAD
 *.in
 build/
 dist/
 *.spec
 ML_learning_algo
+=======
+>>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
