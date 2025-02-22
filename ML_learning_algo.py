@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import KFold
-<<<<<<< HEAD
 from sklearn.metrics import mean_squared_error
 import numpy as np
 import argparse
@@ -9,14 +8,6 @@ import argparse
 import matplotlib
 
 matplotlib.use("Agg")
-=======
-from sklearn.metrics import root_mean_squared_error
-import numpy as np
-import argparse
-import matplotlib
-
-matplotlib.use("TkAgg")
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
 
 
 class PolynomialCurveFitting:
@@ -58,18 +49,11 @@ class PolynomialCurveFitting:
 
     def cross_validate(self, X, y, degrees, kf):
 
-<<<<<<< HEAD
         rmse_score = {}
 
         for degree in degrees:
             rmse_scores_train = []
             rmse_scores_val = []
-=======
-        avg_rmse = {}
-
-        for degree in degrees:
-            rmse_scores = []
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
 
             for i, (train_idx, val_idx) in enumerate(kf.split(X)):
 
@@ -89,7 +73,6 @@ class PolynomialCurveFitting:
                 w = self.train_linear_regression(X_train_scaled, y_train)
 
                 # Predict on Validation set
-<<<<<<< HEAD
                 y_train_pred = self.predict(X_train_scaled, w)
                 y_val_pred = self.predict(X_val_scaled, w)
 
@@ -104,16 +87,6 @@ class PolynomialCurveFitting:
             rmse_score[degree] = np.mean(rmse_scores_val)
 
         return rmse_score, rmse_scores_train, rmse_scores_val, w, combined_rmse
-=======
-                y_val_pred = self.predict(X_val_scaled, w)
-
-                rmse = root_mean_squared_error(y_val, y_val_pred)
-                rmse_scores.append(rmse)
-
-            avg_rmse[degree] = np.mean(rmse_scores)
-
-        return avg_rmse
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
 
     def cross_validate_ridge(
         self,
@@ -152,11 +125,7 @@ class PolynomialCurveFitting:
                 # Predict on Validation set
                 y_val_pred = self.predict(X_val_scaled, w_ridge)
 
-<<<<<<< HEAD
                 rmse = np.sqrt(mean_squared_error(y_val_fold, y_val_pred))
-=======
-                rmse = root_mean_squared_error(y_val_fold, y_val_pred)
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
                 cv_rmse.append(rmse)
 
             avg_rmse = np.mean(cv_rmse)
@@ -164,17 +133,10 @@ class PolynomialCurveFitting:
             if avg_rmse < best_rmse:
                 best_rmse = avg_rmse
                 best_lambda = lambda_value
-<<<<<<< HEAD
             self.best_lambda = best_lambda
         return best_rmse, best_lambda
 
     def plot_points(self, X, y, degree, dataset, best_lambda):
-=======
-
-        return best_rmse, best_lambda
-
-    def plot_points(self, X, y, degree):
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
 
         # Get polynomial features
         X_poly = self.polynomial_features(X, degree)
@@ -198,7 +160,6 @@ class PolynomialCurveFitting:
             color="red",
             label=f"Polynomial Regression for (degree={degree})",
         )
-<<<<<<< HEAD
 
         # ----------------------------
         # Plot the lambda-regularized 28-degree model
@@ -224,18 +185,12 @@ class PolynomialCurveFitting:
             label=f"Lambda-Regularized Regression (degree={reg_degree})",
         )
 
-=======
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
         plt.xlabel("X")
         plt.ylabel("Y")
         plt.title("Polynomial Regression Fit")
         plt.legend()
-<<<<<<< HEAD
         # plt.show()
         plt.savefig(f"{dataset}_plot.png")
-=======
-        plt.show()
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
         plt.close()
 
 
@@ -250,30 +205,17 @@ def argument_parser():
         type=str,
         help="Path to the training dataset for loading",
         default="./train.dat",
-<<<<<<< HEAD
-=======
-        required=True,
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
     )
     parser.add_argument(
         "--test",
         type=str,
         help="Path to the test dataset for loading",
         default="./test.dat",
-<<<<<<< HEAD
     )
 
     parser.add_argument("--plot", action="store_true", help="Enable Plotting")
     parser.add_argument(
         "--no-plot", action="store_false", dest="plot", help="Disables Plotting"
-=======
-        required=True,
-    )
-
-    parser.add_argument(
-        "--plot",
-        type=bool,
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
     )
 
     return parser.parse_args()
@@ -310,7 +252,6 @@ if __name__ == "__main__":
         kf=kf,
     )
 
-<<<<<<< HEAD
     avg_rmse, train_rmse, test_rmse, coefficients, combined_rmse = (
         mlPoly.cross_validate(X_train, y_train, degrees, kf)
     )
@@ -322,29 +263,16 @@ if __name__ == "__main__":
     print(f"Best Degree: {best_degree}")
     print(f"Train RMSE: {np.mean(train_rmse)}")
     print(f"Test RMSE: {np.mean(test_rmse)}")
-=======
-    cv_results = mlPoly.cross_validate(X_train, y_train, degrees, kf)
-
-    best_degree = min(cv_results, key=cv_results.get)
-
-    if parser.plot == True:
-        mlPoly.plot_points(X_train, y_train, best_degree)
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
 
     best_rmse, best_lambda = mlPoly.cross_validate_ridge(
         X_train, y_train, 28, kf, lambda_values, best_rmse, best_lambda
     )
-<<<<<<< HEAD
     if parser.plot:
         mlPoly.plot_points(X_train, y_train, best_degree, "Train", best_lambda)
 
     print(
         f"Ridge Regression --> Best RMSE: {best_rmse}, Best Degree: {best_degree}, Best lambda: {best_lambda}"
     )
-=======
-
-    print(f"Best RMSE: {best_rmse}, Best lambda: {best_lambda}")
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
 
     # Transform full training and test sets
     X_train_poly = mlPoly.polynomial_features(X_train, best_degree)
@@ -357,7 +285,6 @@ if __name__ == "__main__":
 
     # Train final Linear Regression model
     final_w = mlPoly.train_linear_regression(X_train_scaled, y_train)
-<<<<<<< HEAD
 
     # Predict on test set
     y_test_pred = mlPoly.predict(X_test_scaled, final_w)
@@ -372,14 +299,3 @@ if __name__ == "__main__":
     print(
         f"Final Test RMSE: {final_test_rmse:.2f}, Final Train RMSE: {final_train_rmse:.2f} Final Coefficients: {final_w}"
     )
-=======
-    # Predict on test set
-    y_test_pred = mlPoly.predict(X_test_scaled, final_w)
-
-    if parser.plot == True:
-        mlPoly.plot_points(X_test, y_test, best_degree)
-
-    # Compute final test RMSE
-    final_test_rmse = root_mean_squared_error(y_test, y_test_pred)
-    print(f"Final Test RMSE: {final_test_rmse:.2f}")
->>>>>>> fcf1edeb2790b7837fcc0c5f55e41a23770cdd1f
